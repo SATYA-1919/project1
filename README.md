@@ -44,7 +44,7 @@ Next.js 16 (App Router, `proxy.ts`, async params) · React 19 · TypeScript ·
 Tailwind v4 · **MongoDB** (auth + events + analytics) · `jose` (JWT) ·
 TanStack Query · Zod · Recharts-free canvas heatmap · lucide-react · sonner.
 
-## Setup
+## Setup steps
 
 ```bash
 npm install
@@ -89,7 +89,7 @@ table fills in; click a row for the journey, or open **Heatmap** and pick a page
 | GET | `/api/analytics/heatmap?url=` | organiser |
 | GET | `/api/analytics/pages` | organiser |
 
-## Assumptions & trade-offs
+## Assumptions or trade-offs
 
 - **Single database (MongoDB)** for auth, events and analytics — the assignment
   requires MongoDB and the scope doesn't warrant a second store.
