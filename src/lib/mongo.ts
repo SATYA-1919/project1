@@ -11,13 +11,21 @@ const globalForMongo = globalThis as unknown as {
 
 function clientPromise(): Promise<MongoClient> {
   const uri = process.env.MONGODB_URI;
-  if (!uri) throw new Error("MONGODB_URI is not set. Add it to .env.local.");
+  if (!uri) {
+    throw new Error(
+      "MONGODB_URI is not set. Add it to .env.local or your deployment environment variables.",
+    );
+  }
   if (!globalForMongo.__conveneMongo) {
     globalForMongo.__conveneMongo = new MongoClient(uri, {
       maxPoolSize: 10,
     }).connect();
   }
   return globalForMongo.__conveneMongo;
+}
+
+export function hasMongoConfig(): boolean {
+  return Boolean(process.env.MONGODB_URI);
 }
 
 export async function getDb(): Promise<Db> {

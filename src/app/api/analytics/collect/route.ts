@@ -4,6 +4,7 @@ import {
   incomingBatchSchema,
   toStoredEvent,
 } from "@/lib/analytics/schema";
+import { hasMongoConfig } from "@/lib/mongo";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -25,6 +26,7 @@ export async function POST(req: Request) {
     if (!parsed.success) {
       return NextResponse.json({ error: "Validation failed" }, { status: 400 });
     }
+    if (!hasMongoConfig()) return new NextResponse(null, { status: 204 });
 
     const col = await getEventsCollection();
     await col.insertMany(parsed.data.events.map(toStoredEvent), {
