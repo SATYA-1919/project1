@@ -1,0 +1,38 @@
+import { NextResponse } from "next/server";
+import {
+  getEventsCollection,
+  incomingBatchSchema,
+  toStoredEvent,
+} from "@/lib/analytics/schema";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+/** POST /api/analytics/collect — public ingest. sendBeacon posts text/plain. */
+export async function POST(req: Request) {
+  try {
+    const raw = await req.text();
+    if (!raw) return new NextResponse(null, { status: 204 });
+
+    let json: unknown;
+    try {
+      json = JSON.parse(raw);
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    }
+
+    const parsed = incomingBatchSchema.safeParse(json);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Validation failed" }, { status: 400 });
+    }
+
+    const col = await getEventsCollection();
+    await col.insertMany(parsed.data.events.map(toStoredEvent), {
+      ordered: false,
+    });
+    return new NextResponse(null, { status: 204 });
+  } catch (err) {
+    console.error("[analytics/collect]", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
