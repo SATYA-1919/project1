@@ -17,6 +17,10 @@ function clientPromise(): Promise<MongoClient> {
   if (!globalForMongo.__conveneMongo) {
     globalForMongo.__conveneMongo = new MongoClient(uri, {
       maxPoolSize: 10,
+      // Fail fast if the database can't be reached (e.g. Atlas isn't allowing
+      // the deployment's IP) instead of hanging until the serverless function
+      // times out. Surfaces a clear error in the logs.
+      serverSelectionTimeoutMS: 8000,
     })
       .connect()
       .catch((err) => {
