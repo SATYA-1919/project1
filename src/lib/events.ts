@@ -141,7 +141,8 @@ const DEMO_EVENTS: DemoEvent[] = [
   },
 ];
 
-function toView(e: EventDoc): EventView {
+// Turn a stored event document into the plain shape we send to client components.
+export function toView(e: EventDoc): EventView {
   return {
     slug: e.slug,
     title: e.title,

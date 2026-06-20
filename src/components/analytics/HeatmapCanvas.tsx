@@ -25,7 +25,9 @@ interface Props {
   mode: "density" | "dots";
 }
 
-/** Clicks normalised by viewport width (x/vw, y/vw) for a responsive, aspect-correct map. */
+// Draws the clicks onto a canvas, either as a blurred heat layer ("density") or
+// plain dots. We divide each click's x/y by the viewport width it was recorded
+// at, so the map keeps its proportions no matter the screen size it's viewed on.
 export function HeatmapCanvas({ clicks, mode }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);

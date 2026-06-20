@@ -1,7 +1,8 @@
 import { cookies } from "next/headers";
 import { SESSION_COOKIE, verifySessionToken, type SessionUser } from "./jwt";
 
-/** Read the current session from the cookie (server components / route handlers). */
+// Read the logged-in user from the session cookie. For use in server
+// components and route handlers.
 export async function getSession(): Promise<SessionUser | null> {
   const store = await cookies();
   return verifySessionToken(store.get(SESSION_COOKIE)?.value);

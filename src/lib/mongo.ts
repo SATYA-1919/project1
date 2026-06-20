@@ -1,10 +1,8 @@
 import { MongoClient, type Db } from "mongodb";
 
-/**
- * Single MongoDB connection for the whole app — auth, events and the
- * behavioural analytics stream all live here. The connect promise is cached on
- * `globalThis` so Next.js HMR doesn't open a new pool on every reload.
- */
+// One shared MongoDB connection for the whole app (auth, events and analytics
+// all use it). We stash the connect promise on globalThis so that hot-reloads
+// in development reuse the same pool instead of opening a new one each time.
 const globalForMongo = globalThis as unknown as {
   __conveneMongo?: Promise<MongoClient>;
 };

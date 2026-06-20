@@ -1,6 +1,6 @@
 import type { Collection } from "mongodb";
 import { getDb } from "./mongo";
-import type { EventView, EventDoc } from "./events";
+import { toView, type EventView, type EventDoc } from "./events";
 
 export interface ReservationDoc {
   userId: string;
@@ -42,25 +42,7 @@ export async function createReservation(
   );
 }
 
-function toEventView(e: EventDoc): EventView {
-  return {
-    slug: e.slug,
-    title: e.title,
-    tagline: e.tagline,
-    description: e.description,
-    category: e.category,
-    venue: e.venue,
-    city: e.city,
-    date: e.date.toISOString(),
-    durationMins: e.durationMins,
-    tiers: e.tiers,
-    organiserName: e.organiserName,
-    minPrice: e.tiers.length ? Math.min(...e.tiers.map((t) => t.price)) : 0,
-    capacity: e.tiers.reduce((s, t) => s + t.capacity, 0),
-  };
-}
-
-/** A user's reservations, newest first, joined with event details. */
+// A user's reservations, newest first, joined with the event details.
 export async function listReservations(userId: string): Promise<ReservationView[]> {
   const col = await getReservations();
   const docs = await col.find({ userId }).sort({ createdAt: -1 }).toArray();
@@ -72,7 +54,7 @@ export async function listReservations(userId: string): Promise<ReservationView[
     .collection<EventDoc>("events")
     .find({ slug: { $in: slugs } })
     .toArray();
-  const bySlug = new Map(events.map((e) => [e.slug, toEventView(e)]));
+  const bySlug = new Map(events.map((e) => [e.slug, toView(e)]));
 
   return docs.map((d) => ({
     tier: d.tier,

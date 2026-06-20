@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 
-/** Edge-safe session token helpers (jose only — no node:crypto). */
+// Sign and verify the login session token. We use jose (not node:crypto) here
+// because this code also runs in middleware, which doesn't have Node APIs.
 
 export const SESSION_COOKIE = "convene_session";
 

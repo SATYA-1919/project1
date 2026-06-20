@@ -1,7 +1,8 @@
 /*
- * Convene analytics tracker — framework-agnostic, zero dependencies.
- * Tracks page_view (on load AND SPA navigation) and click; buffers and flushes
- * via navigator.sendBeacon. Respects Do Not Track.
+ * Analytics tracker. Drop it on any page with <script src="/tracker.js"> and it
+ * records page_view (on load and on client-side navigation) plus every click,
+ * then sends them to the backend in small batches. No dependencies.
+ * Skips tracking if the browser has Do Not Track turned on.
  */
 (function () {
   "use strict";
@@ -55,6 +56,8 @@
   var SESSION_ID = getSessionId();
   var queue = [];
 
+  // Send whatever's buffered to the backend. Prefer sendBeacon so events still
+  // go out while the page is unloading; fall back to fetch when it's missing.
   function flush() {
     if (!queue.length) return;
     var payload = JSON.stringify({ events: queue.splice(0, queue.length) });
@@ -112,6 +115,9 @@
   });
   window.addEventListener("pagehide", flush);
 
+  // Next.js navigates without a full page load, so we wrap history.pushState/
+  // replaceState (and listen for popstate) to catch URL changes and log a new
+  // page_view each time.
   var lastUrl = currentUrl();
   function onRouteChange() {
     var u = currentUrl();

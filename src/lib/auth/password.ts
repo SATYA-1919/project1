@@ -1,6 +1,7 @@
 import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 
-/** Password hashing with Node's built-in scrypt — no external dependency. */
+// Hash passwords with Node's built-in scrypt so we don't need a bcrypt package.
+// Stored as "salt:hash"; verify re-hashes with the same salt and compares.
 
 export function hashPassword(password: string): string {
   const salt = randomBytes(16).toString("hex");

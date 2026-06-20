@@ -1,4 +1,6 @@
 import { z } from "zod";
+import type { Collection } from "mongodb";
+import { getDb } from "../mongo";
 
 export const ANALYTICS_EVENT_TYPES = ["page_view", "click"] as const;
 export type AnalyticsEventType = (typeof ANALYTICS_EVENT_TYPES)[number];
@@ -107,10 +109,8 @@ export interface PageWithClicks {
   clicks: number;
 }
 
-/** Typed analytics collection, indexes ensured once. */
-import { getDb } from "../mongo";
-import type { Collection } from "mongodb";
-
+// Returns the analytics collection. The first call also creates the indexes we
+// query on (by session, by page+type, by time) so lookups stay fast.
 let indexesEnsured = false;
 
 export async function getEventsCollection(): Promise<Collection<AnalyticsEvent>> {

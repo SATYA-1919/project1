@@ -16,10 +16,9 @@ const RADIUS_PX = 30;
 const WINDOW_MS = 3000;
 const MIN_CLICKS = 3;
 
-/**
- * Rage-click heuristic: ≥3 clicks within ~30px over a 3s window flags a
- * frustrated, repeatedly-clicked region. Pure heuristic — no model.
- */
+// "Rage clicks" are when a user jabs at the same spot in frustration. We flag a
+// region when at least 3 clicks land within ~30px of each other inside a 3s
+// window. Just a simple rule, no machine learning involved.
 export function detectRageClicks(clicks: HeatmapClick[]): RageResult {
   const sorted = [...clicks].sort(
     (a, b) => new Date(a.ts).getTime() - new Date(b.ts).getTime(),

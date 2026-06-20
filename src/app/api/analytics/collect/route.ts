@@ -9,7 +9,9 @@ import { hasMongoConfig } from "@/lib/mongo";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-/** POST /api/analytics/collect — public ingest. sendBeacon posts text/plain. */
+// Where the tracker sends its events. It's public (anonymous visitors need to
+// be tracked too) and reads the body as text because sendBeacon posts
+// text/plain rather than JSON.
 export async function POST(req: Request) {
   try {
     const raw = await req.text();
