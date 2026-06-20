@@ -17,7 +17,15 @@ function clientPromise(): Promise<MongoClient> {
   if (!globalForMongo.__conveneMongo) {
     globalForMongo.__conveneMongo = new MongoClient(uri, {
       maxPoolSize: 10,
-    }).connect();
+    })
+      .connect()
+      .catch((err) => {
+        // Don't cache a failed connection — otherwise one bad first attempt
+        // (Atlas waking up, a network blip) would wedge every later request.
+        // Clear it so the next call retries from scratch.
+        globalForMongo.__conveneMongo = undefined;
+        throw err;
+      });
   }
   return globalForMongo.__conveneMongo;
 }
