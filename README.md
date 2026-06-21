@@ -91,10 +91,3 @@ queries stay fast.
 - **No payments.** Reserving a pass is free and instant — that's out of scope.
 - **Extra credit:** the heatmap also flags "rage clicks" (repeated clicks in the
   same spot), and the journey view animates as a timeline.
-
-## Deploy (Vercel)
-
-1. Push to GitHub and import the repo into [Vercel](https://vercel.com/new).
-2. Add `MONGODB_URI`, `MONGODB_DB` and `AUTH_SECRET` as environment variables.
-3. In MongoDB Atlas → Network Access, allow `0.0.0.0/0` so Vercel can connect.
-4. Deploy, then run `npm run seed` once against the production database.
